@@ -1,0 +1,30 @@
+.main {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6rem;
+}
+
+.container {
+  z-index: 10;
+  max-width: 64rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.welcome {
+  font-size: 1.25rem;
+}

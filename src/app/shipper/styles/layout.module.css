@@ -1,0 +1,20 @@
+.root {
+  min-height: 100vh;
+  background-color: white;
+}
+
+.nav {
+  background-color: #1f2937;
+  color: white;
+  padding: 1rem;
+}
+
+.navContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.navTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
