@@ -104,29 +104,34 @@ export default function FreightCard({
           dropoffLocation={dropoffLocation}
           dropoffTime={dropoffTime}
         />
-
-        <Box
-          sx={{
-            py: 1,
-            borderRadius: "16px",
-            background: "#f6f6f7",
-            mb: 1,
-            px: 1,
-          }}
-        >
-          <Box sx={{ display: "flex" }}>
-            {/* Shipper Section (65%) */}
+        <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+          <WidgetBox>
             <Shipper name={shipperInfo.name} contact={shipperInfo.contact} />
-
-            {/* Broker Section */}
+          </WidgetBox>
+          <WidgetBox>
             <Broker name={brokerInfo.name} reference={brokerInfo.reference} />
-          </Box>
+          </WidgetBox>
         </Box>
 
-        {/* Carrier Section */}
         <CarrierSection carrierInfo={carrierInfo} />
         <BarcodeOnTimer trackingId={trackingId} />
       </Box>
     </Card>
   );
 }
+
+const WidgetBox = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        py: 1,
+        borderRadius: "16px",
+        background: "#f6f6f7",
+        mb: 1,
+        px: 1,
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
