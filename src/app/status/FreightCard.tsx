@@ -1,10 +1,13 @@
 "use client";
-import { Card, Typography, Box, Avatar } from "@mui/material";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
-import CustomizedSteppers from "./Stepper";
+import { Card, Typography, Box } from "@mui/material";
+import { Shipper } from "./widgets/Shipper";
+import { BarcodeOnTimer } from "./widgets/BarcodeOnTimer";
+import { CarrierSection } from "./widgets/Carrier";
 import { StatusHierarchy } from "./StatusHierarchy";
 import { Broker } from "./widgets/Broker";
+import { StepProgress } from "./widgets/StepProgress";
+
+import CustomizedSteppers from "./Stepper";
 
 interface FreightCardProps {
   pickupLocation: string;
@@ -95,92 +98,25 @@ export default function FreightCard({
       </Box>
 
       <Box sx={{ mb: 3 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            mb: 3,
-          }}
-        >
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "1.75rem",
-                fontWeight: 600,
-                color: "#000",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {pickupLocation}
-            </Typography>
-            <Typography sx={{ color: "#666", mt: 1, fontSize: "0.9rem" }}>
-              {pickupTime}
-            </Typography>
-          </Box>
-          <LocalShippingIcon
-            sx={{
-              color: "#2c62cf",
-              fontSize: 20,
-              mt: 2,
-              opacity: 0.8,
-            }}
-          />
-          <Box sx={{ textAlign: "right" }}>
-            <Typography
-              sx={{
-                fontSize: "1.75rem",
-                fontWeight: 600,
-                color: "#000",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {dropoffLocation}
-            </Typography>
-            <Typography sx={{ color: "#666", mt: 1, fontSize: "0.9rem" }}>
-              {dropoffTime}
-            </Typography>
-          </Box>
-        </Box>
+        <StepProgress
+          pickupLocation={pickupLocation}
+          pickupTime={pickupTime}
+          dropoffLocation={dropoffLocation}
+          dropoffTime={dropoffTime}
+        />
 
-        {/* Combined Shipper & Broker Section */}
         <Box
           sx={{
-            py: 1, // Adds 8px padding to top and bottom (1 * theme.spacing(1))
+            py: 1,
             borderRadius: "16px",
             background: "#f6f6f7",
             mb: 1,
-            px: 1, // Adds 28px padding to left and right sides (3.5 * theme.spacing(1))
+            px: 1,
           }}
         >
           <Box sx={{ display: "flex" }}>
             {/* Shipper Section (65%) */}
-            <Box sx={{ flex: "0 0 65%", pr: 1 }}>
-              <Typography
-                sx={{
-                  color: "#666",
-                  fontSize: "0.75rem",
-                  mb: 1.5,
-                  letterSpacing: "0.06em",
-                  opacity: 0.8,
-                }}
-              >
-                SHIPPER
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "1.1rem",
-                  color: "#000",
-                  fontWeight: 500,
-                  mb: 1,
-                }}
-              >
-                {shipperInfo.name}
-              </Typography>
-              <Typography sx={{ color: "#666", fontSize: "0.9rem" }}>
-                {shipperInfo.contact}
-              </Typography>
-            </Box>
+            <Shipper name={shipperInfo.name} contact={shipperInfo.contact} />
 
             {/* Broker Section */}
             <Broker name={brokerInfo.name} reference={brokerInfo.reference} />
@@ -189,135 +125,8 @@ export default function FreightCard({
 
         {/* Carrier Section */}
         <CarrierSection carrierInfo={carrierInfo} />
-        <Box
-          sx={{
-            mt: 3,
-            py: 3,
-            px: 3,
-            background: "#f6f6f7",
-            borderRadius: "16px",
-            textAlign: "center",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              gap: "2px",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "50px",
-              mb: 1.5,
-            }}
-          >
-            {Array.from({ length: 30 }).map((_, index) => (
-              <Box
-                key={index}
-                sx={{
-                  height: "100%",
-                  width: "1.5px",
-                  bgcolor: "#000",
-                  opacity: 0.7,
-                }}
-              />
-            ))}
-          </Box>
-          <Typography
-            sx={{
-              fontFamily: "SF Mono, monospace",
-              fontSize: "0.95rem",
-              color: "#000",
-              opacity: 0.8,
-              letterSpacing: "0.05em",
-            }}
-          >
-            {trackingId}
-          </Typography>
-        </Box>
+        <BarcodeOnTimer trackingId={trackingId} />
       </Box>
     </Card>
   );
 }
-
-const CarrierSection = ({
-  carrierInfo,
-}: {
-  carrierInfo: { name: string; vehicleId: string };
-}) => {
-  return (
-    <Box
-      sx={{
-        py: 2.5,
-        borderRadius: "16px",
-        background: "#f6f6f7",
-        mb: 2,
-        px: 3.5,
-      }}
-    >
-      <Typography
-        sx={{
-          color: "#666",
-          fontSize: "0.75rem",
-          mb: 1.5,
-          letterSpacing: "0.06em",
-          opacity: 0.8,
-        }}
-      >
-        CARRIER
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box>
-          <Typography
-            sx={{
-              fontSize: "1.1rem",
-              color: "#000",
-              fontWeight: 500,
-              mb: 1,
-            }}
-          >
-            {carrierInfo.name}
-          </Typography>
-          <Typography sx={{ color: "#666", fontSize: "0.9rem" }}>
-            {carrierInfo.vehicleId}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            position: "relative",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Avatar
-            sx={{
-              width: 64,
-              height: 64,
-              border: "2px solid #fff",
-              boxShadow: "0 2px 12px rgba(0, 0, 0, 0.08)",
-              borderRadius: "50%",
-            }}
-            src="/shipper-avatar.jpg"
-          />
-          <VerifiedUserOutlinedIcon
-            sx={{
-              position: "absolute",
-              right: -8,
-              bottom: -4,
-              color: "#50C878",
-              backgroundColor: "white",
-              borderRadius: "50%",
-              padding: "2px",
-              fontSize: "22px",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            }}
-          />
-        </Box>
-      </Box>
-    </Box>
-  );
-};

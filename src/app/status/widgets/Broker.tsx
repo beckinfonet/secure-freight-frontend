@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 interface BrokerProps {
   name: string;
   reference: string;
@@ -10,23 +10,37 @@ export const Broker: React.FC<BrokerProps> = ({ name, reference }) => {
   return (
     <Box
       sx={{
-        // flex: "0 0 35%",
-        // backgroundColor: "lightgray",
         borderRadius: "8px",
-        // p: 2,
       }}
     >
-      <Typography
+      <Box
         sx={{
-          color: "#666",
-          fontSize: "0.75rem",
-          mb: 1.5,
-          letterSpacing: "0.06em",
-          opacity: 0.8,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        BROKER
-      </Typography>
+        <Typography
+          sx={{
+            color: "#666",
+            fontSize: "0.75rem",
+            letterSpacing: "0.06em",
+            opacity: 0.8,
+          }}
+        >
+          BROKER
+        </Typography>
+        <OpenInFullIcon
+          sx={{
+            color: "white",
+            backgroundColor: "primary.main",
+            fontSize: "25px",
+            borderRadius: "15%",
+            width: "25px",
+            height: "20px",
+          }}
+        />
+      </Box>
       <Typography
         sx={{
           fontSize: "1.1rem",
