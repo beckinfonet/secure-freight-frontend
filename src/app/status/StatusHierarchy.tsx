@@ -1,8 +1,16 @@
 import { useState } from "react";
-import { Box, Typography, IconButton, Avatar } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Avatar,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useSecureApproval } from "../fingerprints/hooks/useSecureApproval";
 
 interface ConfirmationMethod {
   type: "app" | "text_msg" | "email";
@@ -27,6 +35,8 @@ interface StatusItemProps {
   confirmations: Confirmation[];
   isExpanded: boolean;
   onToggle: () => void;
+  onApprove: () => void;
+  isApproving: boolean;
 }
 
 const CONFIRMATION_METHODS: Record<string, ConfirmationMethod> = {
@@ -52,6 +62,8 @@ const StatusItem = ({
   confirmations,
   isExpanded,
   onToggle,
+  onApprove,
+  isApproving,
 }: StatusItemProps) => (
   <Box>
     <Box
@@ -189,6 +201,9 @@ const StatusItem = ({
                 >
                   {confirmation.status}
                 </Typography>
+                <Typography sx={{ fontSize: "0.75rem", color: "#666" }}>
+                  @9:45AM 5/5/2025
+                </Typography>
               </Box>
 
               <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -247,23 +262,71 @@ const StatusItem = ({
         ))}
       </Box>
     )}
+    {isExpanded && (
+      <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          onClick={(e) => {
+            e.stopPropagation();
+            onApprove();
+          }}
+          disabled={isApproving}
+          sx={{
+            background: "linear-gradient(145deg, #50C878, #3DA164)",
+            "&:hover": {
+              background: "linear-gradient(145deg, #3DA164, #50C878)",
+            },
+          }}
+        >
+          {isApproving ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Approve Rate"
+          )}
+        </Button>
+      </Box>
+    )}
   </Box>
 );
 
 interface StatusHierarchyProps {
   price: number;
-  shipperConfirmed?: boolean;
-  brokerConfirmed?: boolean;
-  carrierConfirmed?: boolean;
+  userId: string;
+  userType: "shipper" | "carrier";
 }
 
-export default function StatusHierarchy({
+export const StatusHierarchy = ({
   price,
-  shipperConfirmed = true,
-  brokerConfirmed = true,
-  carrierConfirmed = true,
-}: StatusHierarchyProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  userId,
+  userType,
+}: StatusHierarchyProps) => {
+  const [isApproving, setIsApproving] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { requestApproval } = useSecureApproval();
+
+  const handleApprove = async (statusId: string) => {
+    setIsApproving(true);
+    try {
+      const approved = await requestApproval(
+        userId,
+        userType as "shipper" | "carrier",
+        {
+          type: "rate",
+          amount: price,
+        }
+      );
+
+      if (approved) {
+        console.log(`Status ${statusId} approved by ${userId} (${userType})`);
+      } else {
+        throw new Error("Approval request failed");
+      }
+    } catch (error) {
+      console.error("Error approving status:", error);
+    } finally {
+      setIsApproving(false);
+    }
+  };
 
   const getStatus = (confirmed: boolean): "confirmed" | "pending" =>
     confirmed ? "confirmed" : "pending";
@@ -271,7 +334,7 @@ export default function StatusHierarchy({
   const confirmations: Confirmation[] = [
     {
       role: "shipper",
-      status: getStatus(shipperConfirmed),
+      status: getStatus(true),
       method: CONFIRMATION_METHODS.app,
       user: {
         name: "Jim Forester",
@@ -280,7 +343,7 @@ export default function StatusHierarchy({
     },
     {
       role: "broker",
-      status: getStatus(brokerConfirmed),
+      status: getStatus(true),
       method: CONFIRMATION_METHODS.text_msg,
       user: {
         name: "Sarah Johnson",
@@ -289,7 +352,7 @@ export default function StatusHierarchy({
     },
     {
       role: "carrier",
-      status: getStatus(carrierConfirmed),
+      status: getStatus(true),
       method: CONFIRMATION_METHODS.email,
       user: {
         name: "Mike Wilson",
@@ -312,9 +375,13 @@ export default function StatusHierarchy({
       <StatusItem
         price={price}
         confirmations={confirmations}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
+        isExpanded={expandedId === "shipper"}
+        onToggle={() =>
+          setExpandedId(expandedId === "shipper" ? null : "shipper")
+        }
+        onApprove={() => handleApprove("shipper")}
+        isApproving={isApproving}
       />
     </Box>
   );
-}
+};

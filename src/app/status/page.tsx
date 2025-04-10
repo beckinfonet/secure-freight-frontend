@@ -24,6 +24,16 @@ const mockFreight = {
     amount: 2500,
     currency: "USD",
   },
+  shipper: {
+    id: "SHP-001",
+    name: "John Doe",
+    avatar: "/shipper-avatar.jpg",
+  },
+  carrier: {
+    id: "CAR-001",
+    name: "Mike Wilson",
+    avatar: "/carrier-avatar.jpg",
+  },
 };
 
 export default function StatusPage() {

@@ -3,7 +3,7 @@ import { Card, Typography, Box, Avatar } from "@mui/material";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import CustomizedSteppers from "./Stepper";
-import StatusHierarchy from "./StatusHierarchy";
+import { StatusHierarchy } from "./StatusHierarchy";
 import { Broker } from "./widgets/Broker";
 
 interface FreightCardProps {
@@ -28,6 +28,16 @@ interface FreightCardProps {
     amount: number;
     currency: string;
   };
+  shipper: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  carrier: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
 }
 
 export default function FreightCard({
@@ -40,6 +50,7 @@ export default function FreightCard({
   brokerInfo,
   trackingId,
   price,
+  shipper,
 }: FreightCardProps) {
   return (
     <Card
@@ -71,7 +82,11 @@ export default function FreightCard({
       {/* Status Hierarchy */}
       {price && (
         <Box>
-          <StatusHierarchy price={price.amount} />
+          <StatusHierarchy
+            price={price.amount}
+            userId={shipper.id}
+            userType="shipper"
+          />
         </Box>
       )}
 
