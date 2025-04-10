@@ -25,7 +25,7 @@ interface UserInfo {
 
 interface Confirmation {
   role: string;
-  status: "confirmed" | "pending";
+  status: "confirmed" | "pending" | "denied";
   method: ConfirmationMethod;
   user: UserInfo;
 }
@@ -178,14 +178,19 @@ const StatusItem = ({
                   sx={{
                     fontSize: 16,
                     color:
-                      confirmation.status === "confirmed" ? "#50C878" : "#ccc",
+                      confirmation.status === "confirmed"
+                        ? "#50C878"
+                        : confirmation.status === "denied"
+                        ? "#FF0000"
+                        : "#ccc",
                     mr: 1,
                   }}
                 />
                 <Typography
                   sx={{
                     fontSize: "0.85rem",
-                    color: "#333",
+                    color:
+                      confirmation.status === "denied" ? "#FF0000" : "#333",
                     textTransform: "capitalize",
                     mr: 1,
                   }}
@@ -202,61 +207,65 @@ const StatusItem = ({
                   {confirmation.status}
                 </Typography>
                 <Typography sx={{ fontSize: "0.75rem", color: "#666" }}>
-                  @9:45AM 5/5/2025
+                  {confirmation.status === "pending"
+                    ? `as of ${new Date().toLocaleString()}`
+                    : "@9:45AM 5/5/2025"}
                 </Typography>
               </Box>
 
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography
-                  sx={{
-                    fontSize: "0.85rem",
-                    color: "#666",
-                    mr: 1,
-                  }}
-                >
-                  via
-                </Typography>
-
-                <Box
-                  sx={{
-                    background: confirmation.method.color,
-                    color: "white",
-                    fontSize: "0.75rem",
-                    px: 1,
-                    py: 0.25,
-                    borderRadius: "4px",
-                    mr: 1,
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  {confirmation.method.label}
-                </Box>
-                <Typography
-                  sx={{
-                    fontSize: "0.85rem",
-                    color: "#666",
-                    mr: 1,
-                  }}
-                >
-                  by
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Avatar
-                    src={confirmation.user.avatar}
-                    alt={confirmation.user.name}
-                    sx={{ width: 24, height: 24 }}
-                  />
+              {confirmation.status !== "pending" && (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     sx={{
                       fontSize: "0.85rem",
-                      color: "#333",
+                      color: "#666",
+                      mr: 1,
                     }}
                   >
-                    {confirmation.user.name}
+                    via
                   </Typography>
+
+                  <Box
+                    sx={{
+                      background: confirmation.method.color,
+                      color: "white",
+                      fontSize: "0.75rem",
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: "4px",
+                      mr: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {confirmation.method.label}
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: "0.85rem",
+                      color: "#666",
+                      mr: 1,
+                    }}
+                  >
+                    by
+                  </Typography>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Avatar
+                      src={confirmation.user.avatar}
+                      alt={confirmation.user.name}
+                      sx={{ width: 24, height: 24 }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "0.85rem",
+                        color: "#333",
+                      }}
+                    >
+                      {confirmation.user.name}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
+              )}
             </Box>
           </Box>
         ))}
@@ -302,6 +311,13 @@ export const StatusHierarchy = ({
 }: StatusHierarchyProps) => {
   const [isApproving, setIsApproving] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [approvalStatuses, setApprovalStatuses] = useState<
+    Record<string, "pending" | "confirmed" | "denied">
+  >({
+    shipper: "pending",
+    broker: "pending",
+    carrier: "pending",
+  });
   const { requestApproval } = useSecureApproval();
 
   const handleApprove = async (statusId: string) => {
@@ -316,25 +332,31 @@ export const StatusHierarchy = ({
         }
       );
 
+      setApprovalStatuses((prev) => ({
+        ...prev,
+        [userType]: approved ? "confirmed" : "denied",
+      }));
+
       if (approved) {
         console.log(`Status ${statusId} approved by ${userId} (${userType})`);
       } else {
         throw new Error("Approval request failed");
       }
     } catch (error) {
+      setApprovalStatuses((prev) => ({
+        ...prev,
+        [userType]: "denied",
+      }));
       console.error("Error approving status:", error);
     } finally {
       setIsApproving(false);
     }
   };
 
-  const getStatus = (confirmed: boolean): "confirmed" | "pending" =>
-    confirmed ? "confirmed" : "pending";
-
   const confirmations: Confirmation[] = [
     {
       role: "shipper",
-      status: getStatus(true),
+      status: approvalStatuses.shipper,
       method: CONFIRMATION_METHODS.app,
       user: {
         name: "Jim Forester",
@@ -343,7 +365,7 @@ export const StatusHierarchy = ({
     },
     {
       role: "broker",
-      status: getStatus(true),
+      status: approvalStatuses.broker,
       method: CONFIRMATION_METHODS.text_msg,
       user: {
         name: "Sarah Johnson",
@@ -352,7 +374,7 @@ export const StatusHierarchy = ({
     },
     {
       role: "carrier",
-      status: getStatus(true),
+      status: approvalStatuses.carrier,
       method: CONFIRMATION_METHODS.email,
       user: {
         name: "Mike Wilson",
