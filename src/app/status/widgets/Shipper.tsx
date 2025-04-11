@@ -6,12 +6,14 @@ interface ShipperProps {
   name: string;
   contact: string;
   isVisible?: boolean;
+  onClick: () => void;
 }
 
 export const Shipper: React.FC<ShipperProps> = ({
   name,
   contact,
   isVisible = true,
+  onClick,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -19,6 +21,7 @@ export const Shipper: React.FC<ShipperProps> = ({
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
+    onClick();
   };
 
   return (
@@ -71,15 +74,7 @@ export const Shipper: React.FC<ShipperProps> = ({
       >
         {contact}
       </Typography>
-      <Typography
-        sx={{
-          color: "#666",
-          fontSize: "0.9rem",
-          mt: 1,
-        }}
-      >
-        {contact}
-      </Typography>
+
       <OpenInFullIcon
         sx={{
           position: "absolute",

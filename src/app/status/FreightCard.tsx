@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Card, Typography, Box } from "@mui/material";
 import { Shipper } from "./widgets/Shipper";
 import { BarcodeOnTimer } from "./widgets/BarcodeOnTimer";
@@ -7,6 +8,9 @@ import { StatusHierarchy } from "./StatusHierarchy";
 import { Broker } from "./widgets/Broker";
 import { StepProgress } from "./widgets/StepProgress";
 import { LiveIndicatorBar } from "./widgets/LiveIndicator/LiveIndicator";
+import { FullInfo } from "./components/FullInfo";
+import { LiveChat } from "./components/LiveChat";
+import { PanicReport } from "./components/PanicReport";
 
 import CustomizedSteppers from "./Stepper";
 
@@ -56,6 +60,7 @@ export default function FreightCard({
   price,
   shipper,
 }: FreightCardProps) {
+  const [showFullInfo, setShowFullInfo] = useState(false);
   return (
     <Card
       sx={{
@@ -108,16 +113,39 @@ export default function FreightCard({
           dropoffTime={dropoffTime}
         />
         <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
-          <WidgetBox>
-            <Shipper name={shipperInfo.name} contact={shipperInfo.contact} />
-          </WidgetBox>
-          <WidgetBox>
-            <Broker name={brokerInfo.name} reference={brokerInfo.reference} />
-          </WidgetBox>
+          {showFullInfo ? (
+            <FullInfo onClick={() => setShowFullInfo(!showFullInfo)} />
+          ) : (
+            <>
+              <WidgetBox>
+                <Shipper
+                  name={shipperInfo.name}
+                  contact={shipperInfo.contact}
+                  onClick={() => setShowFullInfo(!showFullInfo)}
+                />
+              </WidgetBox>
+              <WidgetBox>
+                <Broker
+                  name={brokerInfo.name}
+                  reference={brokerInfo.reference}
+                  onClick={() => setShowFullInfo(!showFullInfo)}
+                />
+              </WidgetBox>
+            </>
+          )}
         </Box>
 
-        <CarrierSection carrierInfo={carrierInfo} />
+        <CarrierSection
+          carrierInfo={carrierInfo}
+          onClick={() => setShowFullInfo(!showFullInfo)}
+        />
         <BarcodeOnTimer trackingId={trackingId} />
+      </Box>
+
+      {/* New components */}
+      <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+        <LiveChat />
+        <PanicReport />
       </Box>
     </Card>
   );

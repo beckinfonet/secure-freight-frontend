@@ -7,11 +7,18 @@ interface BrokerProps {
   reference: string;
 }
 
-export const Broker: React.FC<BrokerProps> = ({ name, reference }) => {
+interface BrokerProps {
+  name: string;
+  reference: string;
+  onClick: () => void;
+}
+
+export const Broker: React.FC<BrokerProps> = ({ name, reference, onClick }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
+    onClick();
   };
 
   return (

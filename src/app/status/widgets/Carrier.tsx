@@ -6,8 +6,10 @@ import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 
 export const CarrierSection = ({
   carrierInfo,
+  onClick,
 }: {
   carrierInfo: { name: string; vehicleId: string };
+  onClick: () => void;
 }) => {
   return (
     <Box
@@ -17,7 +19,9 @@ export const CarrierSection = ({
         background: "#f6f6f7",
         mb: 2,
         px: 3.5,
+        cursor: "pointer",
       }}
+      onClick={onClick}
     >
       <Typography
         sx={{
