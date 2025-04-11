@@ -162,6 +162,7 @@ const StatusItem = ({
               borderRadius: "8px",
               py: 1.5,
               px: 2,
+              m: 2,
               boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
             }}
           >
@@ -388,7 +389,7 @@ export const StatusHierarchy = ({
       sx={{
         background: "#f8f9fa",
         borderRadius: "12px",
-        p: 2,
+        // p: 2,
         width: "100%",
         mt: 2,
         mb: 3,

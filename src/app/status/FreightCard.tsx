@@ -6,6 +6,7 @@ import { CarrierSection } from "./widgets/Carrier";
 import { StatusHierarchy } from "./StatusHierarchy";
 import { Broker } from "./widgets/Broker";
 import { StepProgress } from "./widgets/StepProgress";
+import { LiveIndicatorBar } from "./widgets/LiveIndicator/LiveIndicator";
 
 import CustomizedSteppers from "./Stepper";
 
@@ -77,10 +78,12 @@ export default function FreightCard({
           fontWeight: 600,
           letterSpacing: "0.04em",
           opacity: 0.9,
+          mb: 2,
         }}
       >
         Verified Ledger
       </Typography>
+      <LiveIndicatorBar />
 
       {/* Status Hierarchy */}
       {price && (
