@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, Typography, Box } from "@mui/material";
 import { Shipper } from "./widgets/Shipper";
-import { BarcodeOnTimer } from "./widgets/BarcodeOnTimer";
+import { BarcodeOnTimer } from "./widgets/BarcodeOnTimer/BarcodeOnTimer";
 import { CarrierSection } from "./widgets/Carrier";
 import { StatusHierarchy } from "./StatusHierarchy";
 import { Broker } from "./widgets/Broker";
@@ -13,6 +13,7 @@ import { LiveChat } from "./components/LiveChat";
 import { PanicReport } from "./components/PanicReport";
 
 import CustomizedSteppers from "./Stepper";
+import { ExpandedBarcode } from "./widgets/BarcodeOnTimer/ExpandedBarcode";
 
 interface FreightCardProps {
   pickupLocation: string;
@@ -61,6 +62,7 @@ export default function FreightCard({
   shipper,
 }: FreightCardProps) {
   const [showFullInfo, setShowFullInfo] = useState(false);
+  const [showExpandedBarcode, setShowExpandedBarcode] = useState(false);
   return (
     <Card
       sx={{
@@ -139,7 +141,19 @@ export default function FreightCard({
           carrierInfo={carrierInfo}
           onClick={() => setShowFullInfo(!showFullInfo)}
         />
-        <BarcodeOnTimer trackingId={trackingId} />
+        {showExpandedBarcode ? (
+          <ExpandedBarcode
+            trackingId={trackingId}
+            onClose={() => setShowExpandedBarcode(false)}
+          />
+        ) : (
+          <Box onClick={() => setShowExpandedBarcode(true)}>
+            <BarcodeOnTimer
+              trackingId={trackingId}
+              onClick={() => setShowExpandedBarcode(true)}
+            />
+          </Box>
+        )}
       </Box>
 
       {/* New components */}
