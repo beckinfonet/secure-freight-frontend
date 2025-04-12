@@ -88,7 +88,7 @@ export default function FreightCard({
           mb: 2,
         }}
       >
-        Verified Ledger
+        Validation Ledger
       </Typography>
       <LiveIndicatorBar />
 
